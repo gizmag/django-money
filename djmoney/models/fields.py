@@ -312,6 +312,15 @@ class MoneyField(models.DecimalField):
         defaults['currency_choices'] = self.currency_choices
         return super(MoneyField, self).formfield(**defaults)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super(MoneyField, self).deconstruct()
+
+        default = kwargs['default']
+        kwargs['default_currency'] = str(default.currency)
+        kwargs['default'] = default.amount
+
+        return name, path, args, kwargs
+
     def get_south_default(self):
         return '%s' % str(self.default)
 
